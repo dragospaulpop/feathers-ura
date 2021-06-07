@@ -5,7 +5,13 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [context => {
+      console.log('before hook hit')
+      
+      context.data.payload = 'schimbat'
+
+      return context;
+    }],
     update: [],
     patch: [],
     remove: []
@@ -14,7 +20,12 @@ module.exports = {
   after: {
     all: [],
     find: [],
-    get: [],
+    get: [ context => {
+      console.log('after hook hit')
+      context.result.payload = 'schimbat din nou'
+
+      return context;
+    } ],
     create: [],
     update: [],
     patch: [],

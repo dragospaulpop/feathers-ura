@@ -10,9 +10,7 @@ exports.Custom = class Custom {
   }
 
   async get (id, params) {
-    console.log('getting id: ', id)
     const item = this.items.find(item => item.id === +id)
-    console.log('found: ', item)
     return item;
   }
 
