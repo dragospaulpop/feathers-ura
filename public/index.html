@@ -14,7 +14,8 @@
         height: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;        
+        align-items: center;   
+        flex-direction: column;     
       }
       form {
         display: flex;
@@ -46,6 +47,12 @@
   </head>
   <body>
     <main>
+      <div class="user-info" style="display: none">
+        <div class="email"></div>
+        <div class="logout">
+          <a href="#">Logout</a>
+        </div>
+      </div>
       <form class="login">
         <div>
           <label for="email">Email:</label>
@@ -87,7 +94,11 @@
     </main>
 
     <script>
-      const formLogin = document.querySelector('form.login')
+      const userInfo = document.querySelector('.user-info')      
+      const loggedInEmail = userInfo.querySelector('.email')      
+      const logOut = userInfo.querySelector('.logout a')      
+
+      const formLogin = document.querySelector('form.login')      
       const fetchItems = document.querySelector('.fetchItems')
       const output = document.querySelector('.output')
 
@@ -113,14 +124,19 @@
             body: JSON.stringify(payload) // body data type must match "Content-Type" header
           }).then(response => {
             return response.json()
-          }).then(result => {
+          }).then(result => {            
             if (result.code === 401) {
               alert('Bad credentials, dogg!')
             } else {
               const { accessToken } = result
               localStorage.setItem('token', accessToken)
+              formLogin.reset()
               formLogin.style.display = 'none'
               fetchItems.style.display = 'inline'
+
+              userInfo.style.display = 'flex'
+              
+              loggedInEmail.innerHTML = `User: ${result.user.email}`
             }
           })
           .catch(err => {
@@ -154,6 +170,29 @@
           // check if passwords match
           if (pass === pass2) {
             // do signup
+            const payload = {
+              email, 
+              password: pass
+            }
+
+            fetch('http://localhost:3030/users', {
+              method: 'POST', 
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload) // body data type must match "Content-Type" header
+            }).then(response => {
+              return response.json()
+            }).then(result => {
+              formAccount.reset()
+              formLogin.style.display = 'flex'
+              formAccount.style.display = 'none'
+              alert('Utilizator creat cu succes!')              
+            })
+            .catch(err => {
+              console.log('eroare: ', err)  
+              alert('Don\'t know what to tell ya, brah!')
+            })        
           } else {
             alert('Parolele nu coincid')
           }
@@ -187,6 +226,18 @@
             console.log('eroare la fetchItems: ', err)  
             alert('Eroare la incarcare date!')
           })
+      })
+
+      logOut.addEventListener('click', event => {
+        event.preventDefault()
+
+        userInfo.style.display = 'none'              
+        loggedInEmail.innerHTML = ''
+
+        localStorage.removeItem('token')
+
+        formLogin.style.display = 'flex'
+        formAccount.style.display = 'none'
       })
 
       const emailLogin = document.querySelector('.login input[type="email"]')

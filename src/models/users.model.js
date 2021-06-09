@@ -7,8 +7,20 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const schema = new mongooseClient.Schema({
   
-    email: { type: String, unique: true, lowercase: true },
-    password: { type: String },
+    email: { 
+      type: String, 
+      unique: true, 
+      lowercase: true, 
+      required: true, 
+      validate: value => {
+        const re = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?')
+        const valid = re.test(value)
+        
+        if (valid) return Promise.resolve()
+        else return Promise.reject(new Error('Nope! Email doesn\'t look valid.'))
+      }
+    },
+    password: { type: String, required: true },
   
   
   }, {
