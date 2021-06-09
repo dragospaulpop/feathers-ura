@@ -169,6 +169,11 @@
         if (email && pass && pass2) {
           // check if passwords match
           if (pass === pass2) {
+            // check password length
+            if (pass.length < 16) {
+              alert('Parola trebuie sa contina minim 16 caractere!')
+              return
+            }
             // do signup
             const payload = {
               email, 

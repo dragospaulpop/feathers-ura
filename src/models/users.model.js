@@ -20,7 +20,10 @@ module.exports = function (app) {
         else return Promise.reject(new Error('Nope! Email doesn\'t look valid.'))
       }
     },
-    password: { type: String, required: true },
+    password: { 
+      type: String, 
+      required: true
+    },
   
   
   }, {
